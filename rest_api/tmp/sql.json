@@ -1,0 +1,23 @@
+[
+{
+"name":"query1",
+"host":["10.0.0.9","10.0.0.5"],
+"port":"5432",
+"user":"postgres",
+"password":"std123",
+"query":"SELECT i,nam FROM t1",
+"db":"testdb",
+"bucket":"rumman-log"	
+},
+{
+"name":"query2",
+"host":"10.0.0.9",
+"port":"5432",
+"user":"postgres",
+"password":"std123",
+"query":"SELECT i,nam FROM t2",
+"db":"testdb",
+"bucket":"rumman-log"	
+}
+]
+

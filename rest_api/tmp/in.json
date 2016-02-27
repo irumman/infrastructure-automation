@@ -1,0 +1,5 @@
+[
+{"name":"automation","command":"df -h","targetHost":"10.0.0.9","targetUser":"postgres","UserPassword":"std123","daemon":"false"},
+{"name":"automation1","command":"df -h","targetHost":"10.0.0.5","targetUser":"postgres",,"daemon":"false"}
+
+]

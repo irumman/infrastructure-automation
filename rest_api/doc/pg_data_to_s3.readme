@@ -1,0 +1,50 @@
+Sample 1:
+curl -H "Content-Type: application/json" -d @sql.json -X POST '0.0.0.0:8082/pg_data_to_s3'
+Input:
+[
+{
+"name":"query1",
+"host":["10.0.0.9","10.0.0.5"],
+"port":"5432",
+"user":"postgres",
+"password":"std123",
+"query":"SELECT i,nam FROM t1",
+"db":"testdb",
+"bucket":"rumman-log"   
+},
+{
+"name":"query2",
+"host":"10.0.0.9",
+"port":"5432",
+"user":"postgres",
+"password":"std123",
+"query":"SELECT i,nam FROM t2",
+"db":"testdb",
+"bucket":"rumman-log"   
+}
+]
+Output:
+{  
+   "query1":{  
+      "10.0.0.5":{  
+         "host":"10.0.0.5",
+         "db":"testdb",
+         "description":"Uploaded to https://s3.amazonaws.com/rumman-log/execute_query_api/query1_10.0.0.5_testdb_20160225212211PST.csv",
+         "status":"successful"
+      },
+      "10.0.0.9":{  
+         "host":"10.0.0.9",
+         "db":"testdb",
+         "description":"Uploaded to https://s3.amazonaws.com/rumman-log/execute_query_api/query1_10.0.0.9_testdb_20160225212210PST.csv",
+         "status":"successful"
+      }
+   },
+   "query2":{  
+      "10.0.0.9":{  
+         "host":"10.0.0.9",
+         "db":"testdb",
+         "description":"Uploaded to https://s3.amazonaws.com/rumman-log/execute_query_api/query2_10.0.0.9_testdb_20160225212212PST.csv",
+         "status":"successful"
+      }
+   }
+}

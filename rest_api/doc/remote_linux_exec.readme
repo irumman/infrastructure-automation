@@ -1,0 +1,177 @@
+rest_api_linux_exec.py - serves as an api to execute linux commands or custom scripts on different linux hosts.
+The script assume the directory tree - api,conf,scripts under it's root directory. The api runs from from the api directory, where it looks for the scripts at scripts directory.
+ 
+Invoke rest api using curl:
+curl -H "Content-Type: application/json" -d @in.json -X POST '0.0.0.0:8082/execution'
+
+Sample 1:
+Execute "test.sh" on 10.0.0.9 as a forground process
+Input:
+[
+{"name":"automation","script":"test.sh","targetHost":"10.0.0.9","targetUser":"root","daemon":"false"}
+]
+Output:
+If success:
+{  
+   "automation":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":"0",
+         "daemon":"false",
+         "scriptOutput":"done\n"
+      }
+   }
+}
+If Fail:
+{  
+   "automation":{  
+      "10.0.0.12":{  
+         "status":"successful",
+         "host":"10.0.0.12",
+         "exit_status":0,
+         "daemon":"false",
+         "scriptOutput":"timed out"
+      }
+   }
+}
+
+Sample 2:
+Execute "test.sh" on 10.0.0.9 as a background process, here is outout, it returns the pid of the process and it does not look for success or failure
+Input:
+[
+{"name":"automation","script":"test.sh","targetHost":"10.0.0.9","targetUser":"root","daemon":"true"}
+]
+Output:
+{  
+   "automation":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":0,
+         "daemon":"true",
+         "scriptOutput":"pid=21526\n"
+      }
+   }
+}
+
+
+Sample 3:
+Execute any command, for example, "df -h" on 10.0.0.9 as a foreground process
+Input:
+[
+{"name":"automation1","command":"df -h","targetHost":"10.0.0.9","targetUser":"root","daemon":"false"}
+]
+Output:
+{  
+   "automation1":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":"0",
+         "daemon":"false",
+         "scriptOutput":"Filesystem            Size  Used Avail Use% Mounted onn/dev/mapper/VolGroup00-LogVol00n                       18G  4.4G   13G  27% /n/dev/sda1              99M   13M   81M  14% /bootntmpfs                 502M     0  502M   0% /dev/shmn"
+      }
+   }
+}
+
+
+
+Sample 5:
+Execute same script on multiple host
+Input:
+[
+{"name":"automation","script":"test.sh","targetHost":["10.0.0.9","10.0.0.12"],"targetUser":"root","daemon":"false"},
+]
+Output:
+{  
+   "automation":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":"0",
+         "daemon":"false",
+         "scriptOutput":"donen"
+      },
+      "10.0.0.12":{  
+         "status":"successful",
+         "host":"10.0.0.12",
+         "exit_status":0,
+         "daemon":"false",
+         "scriptOutput":"timed out"
+      }
+   }
+}
+
+
+Sample 4:
+Execute a custom script and a default command by creating two different sets and both are in foreground process 
+Input:
+[
+{"name":"automation","script":"test.sh","targetHost":["10.0.0.9","10.0.0.12"],"targetUser":"root","daemon":"false"},
+{"name":"automation1","script":"df -h","targetHost":"10.0.0.5","targetUser":"root","daemon":"false"}
+]
+Output:
+{  
+   "automation1":{  
+      "programError":{  
+         "status":"failure",
+         "errorMessage":"Script not found at /Users/ahmad.iftekhar/Google Drive/work/cherrypy/rest_api/api/../scripts/df -h",
+         "execution":"failed"
+      }
+   },
+   "automation":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":"0",
+         "daemon":"false",
+         "scriptOutput":"donen"
+      },
+      "10.0.0.12":{  
+         "status":"successful",
+         "host":"10.0.0.12",
+         "exit_status":0,
+         "daemon":"false",
+         "scriptOutput":"timed out"
+      }
+   }
+}
+
+Sample 5:
+Execute a custom script and a default command by creating two different sets where one set in background and other in foreground
+Input:
+[
+{"name":"automation","script":"test.sh","targetHost":["10.0.0.9","10.0.0.12"],"targetUser":"root","daemon":"true"},
+{"name":"automation1","command":"df -h","targetHost":"10.0.0.9","targetUser":"root","daemon":"false"}
+]
+Output:
+{  
+   "automation1":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":"0",
+         "daemon":"false",
+         "scriptOutput":"Filesystem            Size  Used Avail Use% Mounted onn/dev/mapper/VolGroup00-LogVol00n                       18G  4.4G   13G  27% /n/dev/sda1              99M   13M   81M  14% /bootntmpfs                 502M     0  502M   0% /dev/shmn"
+      }
+   },
+   "automation":{  
+      "10.0.0.9":{  
+         "status":"successful",
+         "host":"10.0.0.9",
+         "exit_status":0,
+         "daemon":"true",
+         "scriptOutput":"pid=21771\n"
+      },
+      "10.0.0.12":{  
+         "status":"successful",
+         "host":"10.0.0.12",
+         "exit_status":0,
+         "daemon":"true",
+         "scriptOutput":"timed out"
+      }
+   }
+}
+
+
