@@ -1,1 +1,12 @@
 Need Python request library at https://pypi.python.org/pypi/requests/
+
+pip install request -t <current_directory>
+
+The directory should have these:
+	fbpost_lambda.py
+	requests
+	requests-2.12.4.dist-info
+
+Make a zip of fbpost_lambda
+Upload to lambda
+
